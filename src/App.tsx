@@ -1,26 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { PureComponent } from 'react';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function Component<T extends { new(...args: any[]): any }>(component: T) {
+  return class extends component {
+    handleClick() {
+      super.handleClick()
+      console.log('child clicked');
+    }
+    render() {
+      const parent = super.render()
+      return React.cloneElement(parent, { onClick: this.handleClick })
+    }
+  }
 }
 
-export default App;
+@Component
+export default class App extends PureComponent {
+  handleClick() {
+    console.log('parent click');
+  }
+  render() {
+    return (
+      <div className="App" onClick={this.handleClick}>parent</div>
+    );
+  }
+}
